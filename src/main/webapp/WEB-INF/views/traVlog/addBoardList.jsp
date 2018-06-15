@@ -63,10 +63,10 @@
             </div>
             <!-- 댓글 작성 시작 2018.06.09 -->
             <div class="Bcomment">
-            <label><strong>${sessionScope.memnick }</strong></label>
+            <label><strong class="commentNick">${sessionScope.memnick }</strong></label>
              <input type="text" id="comment_${board.bodno }" name="comment" 
              placeholder="댓글을 입력하세요 ..." style="width:78%" required="required"></input>
-             <input type="button" id="commentBtn" value="댓글입력" style="width:13%;" onclick="javacript:writeComment('${board.bodno}')"></input> <br>
+             <a href="javascript:void(0);" id="commentBtn" style="width:13%;" onclick="javacript:writeComment('${board.bodno}')">댓글입력</a> <br>
              <div class="showComment" id="showComment_${board.bodno }">
              
              </div>
