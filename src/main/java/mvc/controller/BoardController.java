@@ -600,6 +600,22 @@ public class BoardController {
 			model.addAttribute("commentList",commentList);
 
 		}
+		
+		//친구찾기 ajax 작동
+		@RequestMapping(value="/traVlog/followerFindBySearch.do", method=RequestMethod.GET)
+		public void findFollower(HttpSession session, Model model, Member member) {
+			logger.info("친구검색(followerFindBySearch) GET요청");
+			logger.info("받아온 member정보"+member.getSearch());
+			//현재 로그인중인 사람의 id를 가지고 오기..
+			String memid = (String) session.getAttribute("memid");
+			logger.info("session memnick : "+memid);
+			List<Member> searchMemberList = mainService.getMemberListBySearch(member);
+			List<FollowingRec> recList = mainService.recommend(memid);
+			
+			
+			model.addAttribute("searchMemberList",searchMemberList);
+			model.addAttribute("recList", recList);
+		}
 }
 
 

@@ -400,7 +400,15 @@ $(document).ready(function () {
          <c:forEach items="${boardList }" var="board" varStatus="listNumber" begin="0" end="2">
          <div class="board">
             <div class="memInfo">
-            <img class="userimg" src="/resources/images/icon/user.png">
+            <!--      정민   06.13 게시글별 프로필 이미지 넣기 완료 -->
+	         <c:forEach items="${profileList}" var="Bprofile">
+	         <c:if test="${Bprofile.pfSavefile != null }">
+	         <img class="userimg" src="/resources/upload/${Bprofile.pfSavefile }">
+	         </c:if>
+	         <c:if test="${Bprofile.pfSavefile == null }">
+	         <img class="userimg" src="/resources/upload/icon/user.png">
+	         </c:if>
+	         </c:forEach>
             <strong class="nick">${board.bodname }</strong>
             <a href="/traVlog/claim.do?bodno=${board.bodno }" id="claim_${board.bodno }"  onclick="claim(this.href,'name','600','400','yes',${board.bodno});return false"><img class="claim" alt="신고하기" src="/resources/images/icon/claim.png" ></a>
             </div>
@@ -448,7 +456,6 @@ $(document).ready(function () {
             <img id="pin_${board.bodno}" class="pin" width="30px;" src="/resources/images/icon/pin.png">
             </c:if>
             </button>
-            
             </div>
             
             <div class="Bcontent">

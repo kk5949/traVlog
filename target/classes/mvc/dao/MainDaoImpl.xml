@@ -103,5 +103,7 @@
 		SELECT memnick, memfollower From tb_member
 		WHERE memid = 'ad_traVlog'
 	</select>
-	
+	<select id="getMemberListBySearch" parameterType="mvc.dto.Member" resultType="mvc.dto.Member">
+		SELECT MEMNICK FROM TB_MEMBER WHERE MEMNICK LIKE '%'||#{search}||'%'
+	</select>
 </mapper>
