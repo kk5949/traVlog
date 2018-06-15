@@ -27,6 +27,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import mvc.dto.Board;
+import mvc.dto.Claim;
 import mvc.dto.Comment;
 import mvc.dto.Comments;
 import mvc.dto.Files;
@@ -124,13 +125,23 @@ public class BoardController {
 		if(member.getSearch() == null || member.getSearch() =="") {
 			//검색어가 없을때
 			List<Board> boardList = boardService.getBoardListByFollow(boardMember);
+			List<Files> filesList = boardService.getFiles(boardMember);
+			
 			model.addAttribute("boardList",boardList);
+			model.addAttribute("filesList",filesList);
+			logger.info("여기 안돌아가냐?");
+			System.out.println("왜 안나와?"+boardList.get(0).toString());
 			
 		}else if(member.getSearch() != null || member.getSearch() != "") {
 			//검색어가 있을때..
+			logger.info("검색어가 존재한다.");
 			boardMember.setSearch(member.getSearch());
 			List<Board> boardList = boardService.getBoardListBySearch(boardMember);
 			model.addAttribute("boardList",boardList);
+
+			List<Files> filesList = boardService.getFiles(boardMember);
+			model.addAttribute("filesList",filesList);
+			model.addAttribute("search",member.getSearch());
 			System.out.println(boardList.get(0).toString());
 		}
 
@@ -154,20 +165,31 @@ public class BoardController {
 		if(search != "" && search != null) {
 			//검색 값이 존재할 떄
 //			count = count+2;
+			logger.info("검색어가 존재한다.");
 			Member boardMember = new Member();
 			boardMember.setSearch(search);
 			boardMember.setMemid((String)session.getAttribute("memid"));
 			boardMember.setMemnick((String)session.getAttribute("memnick"));
+
 			List<Board> boardList = boardService.getBoardListBySearch(boardMember);
+			List<Files> filesList = boardService.getFiles(boardMember);
+			model.addAttribute("search",search);
 			model.addAttribute("boardList",boardList);
+			model.addAttribute("filesList",filesList);
+
 		}else {
+			logger.info("검색값이 없다");
 			//검색 값이 없을 떄
 			count = count+2;
 			Member boardMember = new Member();
 			boardMember.setMemid((String)session.getAttribute("memid"));
 			boardMember.setMemnick((String)session.getAttribute("memnick"));
 			List<Board> boardList = boardService.getBoardListByFollow(boardMember);
+
+			List<Files> filesList = boardService.getFiles(boardMember);
 			model.addAttribute("boardList",boardList);
+			model.addAttribute("filesList",filesList);
+
 		}
 		
 		model.addAttribute("count",count);
@@ -184,11 +206,6 @@ public class BoardController {
 		logger.info("세팅페이지 비밀번호 변경 GET요청");
 	}
 	
-	@RequestMapping(value = "/traVlog/mylist.do", method = RequestMethod.GET)
-	public void mylist() {
-		logger.info("컨텐츠 상세보기 페이지 GET요청");
-	}
-
 	@RequestMapping(value = "/traVlog/find.do", method = RequestMethod.GET)
 	public void find() {
 		logger.info("아이디/패스워드찾기 페이지 GET요청");
@@ -298,7 +315,7 @@ public class BoardController {
 				files.setFiloriginfile(list.get(i).getOriginalFilename());
 				files.setFilsavefile(stored);
 				files.setFilsize(list.get(i).getSize());
-				
+				files.setFilidx(i);
 				//글번호 가져오기
 				files.setBodno(boardService.getBoardNo(board));
 				//파일 집어넣기
@@ -492,6 +509,39 @@ public class BoardController {
 			}
 		}
 		
+		@RequestMapping(value="/traVlog/claim.do", method=RequestMethod.GET)
+		public void claim(Member member, Board board, HttpSession session, Model model) {
+			logger.info("신고 팝업창 요청");
+			//로그인한 사용자 아이디 가져오기
+			String memid = (String) session.getAttribute("memid");
+			logger.info(memid);
+			
+			//게시글 정보 가져오기
+			logger.info("가져온 게시글 정보"+board.toString());
+			Board claimBoard = boardService.getBoardInfo(board);
+			System.out.println(claimBoard.toString());
+			
+			model.addAttribute("claimBoard",claimBoard);
+		}
+		
+		@RequestMapping(value = "/traVlog/claim.do", method = RequestMethod.POST)
+		public ModelAndView joinProc(HttpSession session, Claim claim) {
+			logger.info("신고 처리");
+			ModelAndView mav;
+			String clmName = (String) session.getAttribute("memnick");
+			 
+			claim.setClmName(clmName);
+			logger.info(claim.toString());
+
+			boardService.insertClaim(claim);
+			logger.info("신고 처리 완료");
+
+			mav= new ModelAndView("util/alert");
+			mav.addObject("msg", "신고 처리가 완료 되었습니다.");
+	        mav.addObject("action", "window.close()");
+			return mav;
+		}
+
 		//댓글 작성AJAX
 		@RequestMapping(value="/traVlog/writeComment.do", method=RequestMethod.GET)
 		public void writeComment(Comment comment,Comments comments,HttpSession session
@@ -548,5 +598,10 @@ public class BoardController {
 			logger.info("리스트의 첫번째 인덱스값 : "+commentList.get(0).toString());
 			model.addAttribute("commentsList",commentsList);
 			model.addAttribute("commentList",commentList);
+
 		}
 }
+
+
+
+

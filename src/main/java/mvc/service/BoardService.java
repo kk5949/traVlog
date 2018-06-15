@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import mvc.dao.BoardDao;
 import mvc.dto.Board;
+import mvc.dto.Claim;
 import mvc.dto.Files;
 import mvc.dto.HashTag;
 import mvc.dto.LatLng;
@@ -106,6 +107,20 @@ public class BoardService {
 	public List<Board> getBoardListBySearch(Member boardMember) {
 		// TODO Auto-generated method stub
 		return boardDao.getBoardListBySearch(boardMember);
+	}
+
+	//신고 게시글 정보 받아오기
+	public Board getBoardInfo(Board board) {
+		return boardDao.getBordInfo(board);
+	}
+	
+	//신고 등록
+	public void insertClaim(Claim claim) {
+		boardDao.insertClaim(claim);
+	}
+
+	public List<Files> getFiles(Member boardMember) {
+		return boardDao.getFiles(boardMember);
 	}
 	
 }

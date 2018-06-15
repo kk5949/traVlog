@@ -7,10 +7,11 @@
 }
 
 .content-wrap-ff .left{
-   position: relative;
-   float: left;
-   width: 600px;
-   border-right: 1px solid #808080;
+
+	position: relative;
+	float: left;
+	width: 600px;
+	border-right: 1px solid #808080;
 }
 
 .content-wrap-ff .right{
@@ -21,7 +22,9 @@
 }
 
 .content-wrap-ff strong{
-   color: #797979;
+	
+	color: #797979;
+
 }
 
 .left_content{
