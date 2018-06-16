@@ -568,31 +568,31 @@ $(document).ready(function () {
 					</div>
 
 					<strong>인기 해시태그</strong><br>
-					<div class="hashTag">
-						<table class="topTag">
-							<c:forEach items="${tagList}" var="tag">
-								<tbody>
-									<tr>
-										<td class="tagname"><a href="#" class="tagA">#${tag.tagname}</a></td>
-										<td class="taghit">${tag.taghit}</td>
-									</tr>
-								</tbody>
-							</c:forEach>
-						</table>
-					</div>
-
-					<strong>인기 사용자</strong><br>
-					<div class="follower">
-						<table class="topMember">
-							<c:forEach items="${memberList}" var="mem">
-								<tbody>
-									<tr>
-										<td class="memnick"><a href="#" class="memA">${mem.memnick}</a></td>
-										<td class="memfollower">${mem.memfollower}</td>
-									</tr>
-								</tbody>
-							</c:forEach>
-						</table>
+         <div class="hashTag">
+            <table class="topTag">
+               <c:forEach items="${tagList}" var="tag">
+                <tbody>
+                    <tr>
+                        <td class="tagname"><a href="#" onclick="javascript:searchTag('${tag.tagname}');" class="tagA">#${tag.tagname}</a>
+                        <td class="taghit">${tag.taghit}</td>
+                    </tr>
+                </tbody>
+               </c:forEach>
+              </table>
+         </div>
+         
+         <strong>인기 사용자</strong><br>
+         <div class="follower">
+         <table class="topMember">
+               <c:forEach items="${memberList}" var="mem">
+                <tbody>
+                    <tr>
+                        <td class="memnick"><a href="#" class="memA">${mem.memnick}</a></td>
+                        <td class="memfollower">${mem.memfollower}</td>
+                    </tr>
+                </tbody>
+               </c:forEach>
+              </table>
 					</div>
 					<div class="goTop" onclick="window.scrollTo(0,0);">TOP</div>
 				</div>

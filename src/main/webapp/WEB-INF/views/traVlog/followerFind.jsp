@@ -32,6 +32,8 @@ $(document).ready(function(){
 		});//ajax끝
 	});
 });
+
+
 </script>
 <body>
 <div id="wrap">
