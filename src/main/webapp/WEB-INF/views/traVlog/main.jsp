@@ -8,6 +8,9 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>TraVlog</title>
 
+<!-- 다음 map -->
+<script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=8d0237c9907bee104ad426d666bbc73e"></script>
+
 <link href="/resources/css/main.css" rel="stylesheet">
 <link href="/resources/css/mainContainer.css" rel="stylesheet">
 <link href="/resources/css/mylist.css" rel="stylesheet">
@@ -25,6 +28,13 @@
 .commentNick{
 	font-size: 19px; 
 	padding-right: 10px;
+}
+<!-- 맵 스타일 추가 -->
+.boardMap{
+	width: 550px;
+	height: 375px;
+	display: block;
+	border: 3px solid #92A8D1;
 }
 </style>
 <script type="text/javascript">
@@ -248,6 +258,8 @@ $(document).ready(function () {
             success : function(data){
                   console.log("성공?");
                      $("#showComment_"+bodno).html(data);
+                     //댓글작성하고나서 작성칸 비워달라그래서 넣어줌..
+                     $("#comment_"+bodno).val("");
                      $("#showCommentBtn_"+bodno).text("댓글안보기");
                   },error:function(data){
                      alert("실패");
@@ -410,6 +422,7 @@ $(document).ready(function () {
 </script>
 
 
+
 </head>
 
 <body onload="InitializeStaticMenu();">
@@ -478,7 +491,6 @@ $(document).ready(function () {
 				
 							</div>
 
-
 							<div class="icon">
 								<!-- 좋아요 기능  -->
 								<button id="recoBtn_${board.bodno}" class="btnRecommend"
@@ -520,7 +532,93 @@ $(document).ready(function () {
 								<c:forTokens items="${board.bodhashtag }" delims="#" var="item">
 									<a href="javascript:void(0);" onclick="javascript:searchTag('${item}');" class="tag">#${item}</a>
 								</c:forTokens>
+							
+								<!-- 지도 띄우기 시도..06.17 -->
+								<c:forEach items="${mapList }" var="map">
+									<c:if test="${map.bodno == board.bodno}">
+										<a id="aMap_${map.bodno }" href="javascript:void(0);" onclick="javascript:showMap('${map.bodno}')">지도보기</a>
+									</c:if>
+								</c:forEach>
+								<div id="boardMap_${board.bodno}" class="boardMap">
+								</div>
+								<!-- 지도 띄우기 시도..끝 -->
+<script type="text/javascript">
+//지도 보여주는 스크립트 새로 추가함 6.17
+var mapX;
+var mapY;
+var xlist,ylist;
+//position정보를 가져와서 첫번쨰 인덱스를 중심으로 지도를 그리고
+//position정보 list수만큼 마커를 찍는다.
+function makeDaumMap(bodno){
+	console.log(mapX+","+mapY);
+	var container = document.getElementById("boardMap_"+bodno);
+	console.log(container);
+	var options = {
+		center : new daum.maps.LatLng(mapX,mapY),
+		level : 5
+	};
+	
+	var map = new daum.maps.Map(container, options);
+	
+	// 지도를 재설정할 범위정보를 가지고 있을 LatLngBounds 객체를 생성합니다
+	var bounds = new daum.maps.LatLngBounds();
+	
+	for (var i = 0; i < xlist.length; i ++) {
+		console.log("마커 생성하러 왔다.");
+	    // 마커를 생성합니다
+	    var marker = new daum.maps.Marker({
+	        map: map, // 마커를 표시할 지도
+	        position: new daum.maps.LatLng(xlist[i], ylist[i]) // 마커를 표시할 위치
+	    });
+	 // LatLngBounds 객체에 좌표를 추가합니다
+	    bounds.extend(new daum.maps.LatLng(xlist[i], ylist[i]));
+	}
+	map.setBounds(bounds);
+}
 
+function showMap(bodno){
+	mapX=null;
+	mapY=null;
+	xlist=[];
+	ylist=[];
+	
+	console.log("showMap 클릭됨.. bodno = "+bodno);
+	if ($("#aMap_" + bodno).text() == "지도보기"){
+		$("#boardMap_" + bodno).css("display", "block");
+		$("#boardMap_" + bodno).css("width","100%");
+		$("#boardMap_" + bodno).css("height","375px");
+		$("#aMap_" + bodno).text("지도감추기");
+		
+		//지도 position(좌표정보) 가져오기.
+		$.ajax({
+			type:'post',
+			url:'/traVlog/showMap.do',
+			data:{"bodno":bodno},
+			dataType:'json',
+			success:function(d){
+				console.log("지도 position가져오기 ajax 성공");
+				mapX = d.posiXY[0].positionx;
+				mapY = d.posiXY[0].positiony;
+				
+				for(var i=0; i<d.posiXY.length;i++){
+					//지도 및 마커 생성
+					console.log("posiXY"+"("+i+")"+" : "+d.posiXY[i].positionx+","+d.posiXY[i].positiony);
+					xlist.push(d.posiXY[i].positionx);
+					ylist.push(d.posiXY[i].positiony);
+				}
+				makeDaumMap(bodno);
+			},error:function(e){
+				console.log("지도 position가져오기 ajax 실패");
+			}
+		});
+	} else {
+		$("#boardMap_" + bodno).css("display", "none");
+		$("#aMap_" + bodno).text("지도보기");
+	}
+}
+
+
+</script>
 								<!-- 댓글 작성 시작 2018.06.09 -->
 								<div class="Bcomment">
 									<label><strong class="commentNick">${sessionScope.memnick }</strong></label>

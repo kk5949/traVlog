@@ -104,6 +104,15 @@
 					<a href="javascript:void(0);"
 						onclick="javascript:searchTag('${item}');" class="tag">#${item}</a>
 				</c:forTokens>
+				<!-- 지도 띄우기 시도..06.17 -->
+				<c:forEach items="${mapList }" var="map">
+					<c:if test="${map.bodno == board.bodno}">
+						<a id="aMap_${map.bodno }" href="javascript:void(0);"
+							onclick="javascript:showMap('${map.bodno}')">지도보기</a>
+					</c:if>
+				</c:forEach>
+				<div id="boardMap_${board.bodno}" class="boardMap"></div>
+				<!-- 지도 띄우기 시도..끝 -->
 			</div>
 			<!-- 댓글 작성 시작 2018.06.09 -->
 
