@@ -33,7 +33,7 @@ public interface MemberDao {
 	   
 	public void insertFollow(Follow insertFollow);
 
-	public Member getMemberByNick(Member member);
+	public Member getMemberById(Member member);
 	
 	public void followAdmin(Member member);
 	   
